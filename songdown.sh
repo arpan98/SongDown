@@ -1,17 +1,24 @@
 #!/bin/bash
 
 #Options usage:
-# -v or --video : Downloads video in highest quality (720p max). (If not provided, downloads audio only)
-# -r OR --results <integer(less than 15)> : Defines number of results to be shown from youtube search.
-# -d OR --directory <path> : Defines path of downloaded mp3 file.
+# -v or --video 							: Downloads video in highest quality (720p max). 			: Default = False
+# -p OR --path <path> 						: Defines path of downloaded mp3 file.						: Default = ~/songdown/
+# -r OR --results <integer(less than 15)> 	: Defines number of results to be shown from youtube search.: Default = 4
+# -d OR --default <path>					: Sets default path.
 
 #Script exits on error
 set -e
 
 #Setting default options
-VIDEO=false
-DOWN_DIR="~/songdown"
-RESULTS=3
+if [ ! -f defaults.conf ]; then
+	cat <<- EOL > defaults.conf
+		VIDEO=false
+		DOWN_DIR="~/songdown"
+		RESULTS=3
+	EOL
+else
+	source defaults.conf
+fi
 
 #Taking options input if provided
 while [[ $# > 0 ]]
@@ -38,9 +45,8 @@ case $key in
 	shift
     ;;
     -d|--default)
-	DEFAULT_DIR="$2"
-	DEFAULT_DIR="$DEFAULT_DIR/%(title)s.%(ext)s"
-	echo "$DEFAULT_DIR" > default_dir
+	DEFAULT_DIR=$2"/%(title)s\.%(ext)s"
+	sed -i "s#DOWN_DIR=.*#DOWN_DIR=\"$DEFAULT_DIR\"#" defaults.conf
     shift
     ;;
     *)
@@ -49,11 +55,6 @@ case $key in
 esac
 shift # past argument or value
 done
-if [ ! -f default_dir ]; then
-	DOWN_DIR="$DOWN_DIR/%(title)s.%(ext)s"
-else
-	DOWN_DIR=$(<default_dir)
-fi
 
 echo -e "\nSongDown started.\n\nEnter name of song - "
 read
