@@ -96,3 +96,4 @@ else
 	youtube-dl -o $DOWN_DIR --extract-audio --audio-format mp3 --audio-quality 0 "${links[$index]}"
 fi
 echo -e "\nSongDown finished. Exiting...\n"
+rm sample
