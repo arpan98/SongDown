@@ -4,10 +4,10 @@
 ##### SongDown allows you to search, choose and download songs, all from the *terminal*, without having to open a browser at all.
 
 #### Usage
-Just run the script to search and download any song from Youtube using the settings defined in `defaults.conf`.
+Just run the script to search and download any song from Youtube using the settings defined in `~/songdown/defaults.conf`.
 
 #### Settings
-The default settings in `defaults.conf` can be changed as per requirement. Preset defaults are -
+The default settings in `~/songdown/defaults.conf` can be changed as per requirement. Preset defaults are -
 ```
 VIDEO=false
 DOWN_DIR="~/songdown/
