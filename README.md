@@ -1,10 +1,10 @@
 # SongDown
 
 ### A terminal-based Youtube song search and downloader using `youtube-dl`
-##### SongDown allows you to search, choose and download songs, all from the terminal, without having to open a browser at all.
+##### SongDown allows you to search, choose and download songs, all from the *terminal*, without having to open a browser at all.
 
 #### Usage
-Just run the script to download any song from Youtube using the settings defined in `defaults.conf`.
+Just run the script to search and download any song from Youtube using the settings defined in `defaults.conf`.
 
 #### Settings
 The default settings in `defaults.conf` can be changed as per requirement. Preset defaults are -
