@@ -61,15 +61,14 @@ read
 
 #Checking for prerequisite packages
 echo -e "\nLooking for youtube-dl..."
-if dpkg-query -W --showformat='${Status}\n' youtube-dl | grep -q "install ok installed"
+if youtube-dl --version
 	then
 	echo "youtube-dl found!"
 else
-	echo -e "youtube-dl missing! \n\n Installing youtube-dl..."
-	sleep 1
-	sudo add-apt-repository ppa:nilarimogard/webupd8
-	sudo apt-get update
-	sudo apt-get install youtube-dl
+	echo "youtube-dl missing!"
+	echo "To install youtube-dl you can follow the instructions at"
+	echo "http://www.tecmint.com/install-youtube-dl-command-line-video-download-tool/"
+	exit 1
 fi
 
 search_string=${REPLY// /+}
@@ -98,3 +97,4 @@ else
 fi
 echo -e "\nSongDown finished. Exiting...\n"
 rm sample
+exit 0
