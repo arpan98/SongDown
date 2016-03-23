@@ -10,14 +10,14 @@
 set -e
 
 #Setting default options
-if [ ! -f defaults.conf ]; then
-	cat <<- EOL > defaults.conf
+if [ ! -f ~/songdown/defaults.conf ]; then
+	cat <<- EOL > ~/songdown/defaults.conf
 		VIDEO=false
-		DOWN_DIR="~/songdown"
+		DOWN_DIR="~/songdown/"
 		RESULTS=3
 	EOL
 fi
-source defaults.conf
+source ~/songdown/defaults.conf
 
 #Taking options input if provided
 while [[ $# > 0 ]]
@@ -45,7 +45,7 @@ case $key in
     ;;
     -d|--default)
 	DEFAULT_DIR=$2
-	sed -i "s#DOWN_DIR=.*#DOWN_DIR=\"$DEFAULT_DIR\"#" defaults.conf
+	sed -i "s#DOWN_DIR=.*#DOWN_DIR=\"$DEFAULT_DIR\"#" ~/songdown/defaults.conf
     shift
     ;;
     *)
