@@ -16,9 +16,8 @@ if [ ! -f defaults.conf ]; then
 		DOWN_DIR="~/songdown"
 		RESULTS=3
 	EOL
-else
-	source defaults.conf
 fi
+source defaults.conf
 
 #Taking options input if provided
 while [[ $# > 0 ]]
@@ -45,7 +44,7 @@ case $key in
 	shift
     ;;
     -d|--default)
-	DEFAULT_DIR=$2"/%(title)s\.%(ext)s"
+	DEFAULT_DIR=$2
 	sed -i "s#DOWN_DIR=.*#DOWN_DIR=\"$DEFAULT_DIR\"#" defaults.conf
     shift
     ;;
@@ -55,6 +54,7 @@ case $key in
 esac
 shift # past argument or value
 done
+DOWN_DIR=$DOWN_DIR"/%(title)s\.%(ext)s"
 
 echo -e "\nSongDown started.\n\nEnter name of song - "
 read
