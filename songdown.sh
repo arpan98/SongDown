@@ -54,7 +54,7 @@ case $key in
 esac
 shift # past argument or value
 done
-DOWN_DIR=$DOWN_DIR"/%(title)s\.%(ext)s"
+DOWN_DIR=$DOWN_DIR"/%(title)s.%(ext)s"
 
 echo -e "\nSongDown started.\n\nEnter name of song - "
 read
@@ -92,7 +92,7 @@ echo
 echo "Downloading ${names[$index]}"
 
 if [ "$VIDEO" = true ]; then
-	youtube-dl -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4 "${links[$index]}"
+	youtube-dl -o $DOWN_DIR -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4 "${links[$index]}"
 else
 	youtube-dl -o $DOWN_DIR --extract-audio --audio-format mp3 --audio-quality 0 "${links[$index]}"
 fi
