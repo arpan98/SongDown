@@ -7,7 +7,12 @@
 Just run the script to download any song from Youtube using the settings defined in `defaults.conf`.
 
 #### Settings
-The default settings in `defaults.conf`
+The default settings in `defaults.conf` can be changed as per requirement. Preset defaults are -
+```
+VIDEO=false
+DOWN_DIR="~/songdown/
+RESULTS=3
+```
 
 #### Options
 | Option                                   | Value                 | What it does                                               | Default               |
