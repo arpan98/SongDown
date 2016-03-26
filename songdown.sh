@@ -56,9 +56,6 @@ shift # past argument or value
 done
 DOWN_DIR=$DOWN_DIR"/%(title)s.%(ext)s"
 
-echo -e "\nSongDown started.\n\nEnter name of song - "
-read
-
 #Checking for prerequisite packages
 echo -e "\nLooking for youtube-dl..."
 if youtube-dl --version
@@ -71,30 +68,40 @@ else
 	exit 1
 fi
 
-search_string=${REPLY// /+}
-search_url="https://www.youtube.com/results?search_query="
-search_url=$search_url$search_string
-echo
-echo "Retrieving results from Youtube..."
-wget -qO- $search_url > sample
-IFS=$'\n' links=($(cat sample | grep '<a href="/watch?v=' | sed 's/.*<a href="\(\/watch?v=.\{11\}\)".*/https:\/\/www\.youtube\.com\1/'))
-IFS=$'\n' names=($(cat sample | grep '<a href="/watch?v=' | sed 's/.*<a href=.*dir="ltr">\(.*\)<\/a><span.*/\1/'))
-len=${#names[*]}
+REPLY='y'
+while [ $REPLY = 'y' ]; do
+    echo -e "\nSongDown started.\n\nEnter name of song - "
+    read
 
-for i in $(seq 0 $RESULTS); do
-	echo
-	echo "$i. ${names[$i]}"
+    search_string=${REPLY// /+}
+    search_url="https://www.youtube.com/results?search_query="
+    search_url=$search_url$search_string
+    echo
+    echo "Retrieving results from Youtube..."
+    wget -qO- $search_url > sample
+    IFS=$'\n' links=($(cat sample | grep '<a href="/watch?v=' | sed 's/.*<a href="\(\/watch?v=.\{11\}\)".*/https:\/\/www\.youtube\.com\1/'))
+    IFS=$'\n' names=($(cat sample | grep '<a href="/watch?v=' | sed 's/.*<a href=.*dir="ltr">\(.*\)<\/a><span.*/\1/'))
+    len=${#names[*]}
+
+    for i in $(seq 0 $RESULTS); do
+        echo
+        echo "$i. ${names[$i]}"
+    done
+    echo -ne "\nEnter selection number - "
+    read index
+    echo
+    echo "Downloading ${names[$index]}"
+
+    if [ "$VIDEO" = true ]; then
+        youtube-dl -o $DOWN_DIR -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4 "${links[$index]}"
+    else
+        youtube-dl -o $DOWN_DIR --extract-audio --audio-format mp3 --audio-quality 0 "${links[$index]}"
+    fi
+
+    echo -ne "\nDo you want to download another song? [yn] "
+    read
 done
-echo -e "\nEnter selection number - "
-read index
-echo
-echo "Downloading ${names[$index]}"
 
-if [ "$VIDEO" = true ]; then
-	youtube-dl -o $DOWN_DIR -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4 "${links[$index]}"
-else
-	youtube-dl -o $DOWN_DIR --extract-audio --audio-format mp3 --audio-quality 0 "${links[$index]}"
-fi
 echo -e "\nSongDown finished. Exiting...\n"
 rm sample
 exit 0
