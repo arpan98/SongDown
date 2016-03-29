@@ -1,4 +1,4 @@
-#!/bin/bash/env python
+#!/usr/bin/env python
 
 import os, sys, requests, json, subprocess, argparse
 
@@ -38,10 +38,10 @@ def youtube_search(search_string, RESULTS):
 
 if __name__ == "__main__":
 	#Managing config file
-	filename = 'defaults.conf'
+	filename = os.path.expanduser('~/.songdownrc')
 	if not os.path.isfile(filename):
 		with open(filename, 'w') as file:
-			file.write('VIDEO=false\nDOWN_DIR="~/songdown/"\nRESULTS=3')
+			file.write('VIDEO=false\nDOWN_DIR="~/Music/SongDown/"\nRESULTS=3')
 	with open(filename, 'r') as file:
 		for line in file:
 			keys = line.split('=')
@@ -66,8 +66,8 @@ if __name__ == "__main__":
 	parser.add_argument("-p", "--path", help="Specify download path")
 	parser.add_argument("-r", "--results", help="Specify number of search results to be shown")
 	parser.add_argument("-d", "--default", help="Set default path")
-	
-	
+
+
 	name = raw_input("\nSongdown started.\n\nEnter name of song - ")
 	search_string = name.replace(' ','+')
 
@@ -80,9 +80,14 @@ if __name__ == "__main__":
 		print "\nExiting...\n"
 		sys.exit()
 
+        DOWN_DIR = os.path.expanduser(DOWN_DIR)
+        # Create download dir if necessary
+        if not os.path.exists(DOWN_DIR):
+            os.makedirs(DOWN_DIR)
+
 	print "\nRetrieving results from youtube...\n"
 	youtube_search(search_string, RESULTS)
-	
+
 	selected = False
 	while not selected:
 		index = raw_input("Enter selection number - ")
@@ -93,7 +98,7 @@ if __name__ == "__main__":
 		except:
 			print "\nInvalid selection!\n"
 	title = '/%' + '(title)s.%' +'(ext)s'
-	path = '~/songdown/songs' + title
+	path = DOWN_DIR + title
 	if VIDEO:
 		subprocess.call(['youtube-dl', '-o', path, '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio', '--merge-output-format', 'mp4', 'https://www.youtube.com/watch?v='+ids[index]])
 	else:
