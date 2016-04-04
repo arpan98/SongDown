@@ -45,9 +45,10 @@ if __name__ == "__main__":
 	with open(filename, 'r') as file:
 		for line in file:
 			keys = line.split('=')
+			keys[1] = keys[1].strip()
 			if keys[0] == 'VIDEO':
 				try:
-					VIDEO = bool(keys[1])
+					VIDEO = keys[1] == 'true'
 				except:
 					print "Config file error"
 			elif keys[0] == 'DOWN_DIR':
