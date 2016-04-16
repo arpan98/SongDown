@@ -67,7 +67,9 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--path", help="Specify download path")
     parser.add_argument("-r", "--results", help="Specify number of search results to be shown")
     parser.add_argument("-d", "--default", help="Set default path")
+    parser.add_argument("-c", "--continue", dest="cont", help="Continue failed search/download", action="store_true")
 
+    args = parser.parse_args()
 
     print "\nLooking for youtube-dl..."
     if not os.system("youtube-dl --version"):
@@ -83,25 +85,62 @@ if __name__ == "__main__":
     if not os.path.exists(DOWN_DIR):
         os.makedirs(DOWN_DIR)
 
-    name = raw_input("\nSongdown started.\n\nEnter name of song - ")
-    search_string = name.replace(' ','+')
-
-    print "\nRetrieving results from youtube...\n"
-    youtube_search(search_string, RESULTS)
-
-    selected = False
-    while not selected:
-        index = raw_input("Enter selection number - ")
+    skip_name = False
+    skip_select = False
+    if args.cont:
         try:
-            index = int(index)
-            print "\nDownloading", names[index]
-            selected = True
+            failsafe = open('/tmp/songdown.fail','r')
+
+            for line in failsafe:
+                line = line.split(" = ")
+                if line[0] == "SEARCH":
+                    search_string = line[1];
+                    skip_name = True
+                    print "Previous search found: " + search_string
+                elif line[0] == "VID":
+                    ids = [line[1]]
+                    index = 0
+                    skip_name = True
+                    skip_select = True
+                    print "Previous selected video found: " + ids[index]
+
+            failsafe.close()
         except:
-            print "\nInvalid selection!\n"
+            print "Failure log not found. Continuing normally..."
+
+    failsafe = open('/tmp/songdown.fail','w')
+
+
+    if not skip_name:
+        name = raw_input("\nSongdown started.\n\nEnter name of song - ")
+        search_string = name.replace(' ','+')
+
+    failsafe.write('SEARCH = ' + search_string + '\n')
+
+    if not skip_select:
+        print "\nRetrieving results from youtube...\n"
+        youtube_search(search_string, RESULTS)
+
+        selected = False
+        while not selected:
+            index = raw_input("Enter selection number - ")
+            try:
+                index = int(index)
+                print "\nDownloading", names[index]
+                selected = True
+            except:
+                print "\nInvalid selection!\n"
+
+    failsafe.write('VID = ' + ids[index] + '\n')
+
     title = '/%' + '(title)s.%' +'(ext)s'
     path = DOWN_DIR + title
     if VIDEO:
         subprocess.call(['youtube-dl', '-o', path, '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio', '--merge-output-format', 'mp4', 'https://www.youtube.com/watch?v='+ids[index]])
     else:
         subprocess.call(['youtube-dl', '-o', path, '--extract-audio', '--audio-format', 'mp3', '--audio-quality', '0', 'https://www.youtube.com/watch?v='+ids[index]])
+
+    failsafe.close()
+    os.remove('/tmp/songdown.fail')
+
     print "\nSongDown finished. Exiting...\n"
