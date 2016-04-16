@@ -69,9 +69,6 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--default", help="Set default path")
 
 
-    name = raw_input("\nSongdown started.\n\nEnter name of song - ")
-    search_string = name.replace(' ','+')
-
     print "\nLooking for youtube-dl..."
     if not os.system("youtube-dl --version"):
         print "\nyoutube-dl found!"
@@ -81,10 +78,13 @@ if __name__ == "__main__":
         print "\nExiting...\n"
         sys.exit()
 
-        DOWN_DIR = os.path.expanduser(DOWN_DIR)
-        # Create download dir if necessary
-        if not os.path.exists(DOWN_DIR):
-            os.makedirs(DOWN_DIR)
+    DOWN_DIR = os.path.expanduser(DOWN_DIR)
+    # Create download dir if necessary
+    if not os.path.exists(DOWN_DIR):
+        os.makedirs(DOWN_DIR)
+
+    name = raw_input("\nSongdown started.\n\nEnter name of song - ")
+    search_string = name.replace(' ','+')
 
     print "\nRetrieving results from youtube...\n"
     youtube_search(search_string, RESULTS)
